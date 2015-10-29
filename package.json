@@ -1,0 +1,44 @@
+{
+  "name": "redis-snapshot",
+  "version": "1.0.0",
+  "description": "Creates snapshot of Redis database to custom binary file, to be able to restore Redis database from this file",
+  "main": "index.js",
+  "scripts": {
+    "spec": "mocha ./test/*.test.js",
+    "it": "mocha ./test/*.it.js",
+    "lint": "eslint .",
+    "test": "npm run lint && npm run spec",
+    "coverage": "istanbul cover _mocha -- ./test/*.test.js",
+    "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
+  },
+  "homepage": "https://github.com/psulek/node-redis-snapshot",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:psulek/node-redis-snapshot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/psulek/node-redis-snapshot/issues"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "keywords": [
+    "redis",
+    "dump",
+    "restore",
+    "save",
+    "load",
+    "snapshot",
+    "export",
+    "backup"
+  ],
+  "author": "Peter Šulek <psulek@gmail.com>",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^1.x.x",
+    "mocha": "2.x.x",
+    "node-uuid": "^1.x.x",
+    "redis": "^1.x.x"
+  }
+}

@@ -1,0 +1,91 @@
+FILE
+{
+	header		HEADER
+	snapshot	SNAPSHOT
+	keyCount	UINT32
+	keyList		KEY[keyCount]
+	dataList	DATA[keyCount]
+}
+
+HEADER
+{
+	signature	UINT32
+	version		UINT16
+	flags		UINT32
+	reserved1	UINT32
+	length		UINT64
+}
+
+SNAPSHOT
+{
+	date		INT32
+	description	STRING
+	server		STRING
+}
+
+KEY
+{
+	type		BYTE
+	ttlFormat	BYTE
+	ttlvalue	UINT32
+	keyLength	UINT32
+	key			BYTE[keyLength]
+	crc			CRC
+}
+
+DATA
+{
+	dataFormat	BYTE
+	dataLength	INT32,
+	data		BYTE[dataLength]
+}
+
+CRC
+{
+	crcLength	INT32
+	crc			BYTE[crcLength]
+}
+
+STRING
+{
+	stringLength	INT32
+	string			BYTE[stringLength]
+}
+
+Remarks: 
+- Little endian is used
+- INT32 (32-bit signed integer, 4 bytes)
+- UINT32 (32-bit unsigned integer, 4 bytes)
+- UINT16 (16-bit unsigned integer, 2 bytes)
+- UINT64 (64-bit unsigned integer, 8 bytes)
+- BYTE (8-bit unsigned integer, 1 bytes)
+
+HEADER.flags
+	Internal flags for snapshot
+
+SNAPSHOT.date
+	Unix timestamp in seconds, represents date when snapshot was created
+	
+KEY.type 
+	Number mapping to valid redis key type.
+	Values:
+		0 - String
+		1 - List
+		2 - Set
+		3 - SortedSet
+		4 - Hash
+		255 - Unknown
+
+KEY.ttlFormat
+	Format of ttl value
+	Values:
+		0 - no tll value
+		1 - tll value specified in milliseconds
+		2 - ttl value specified in seconds
+	When value 0 is used then KEY.ttlvalue is omited
+
+DATA.dataFormat
+	Format of data buffer
+	Values:
+		0 - data buffer from redis dump command
+		1 - custom data buffer

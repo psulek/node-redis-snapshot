@@ -1,0 +1,11 @@
+/.idea/
+/test/
+/coverage/
+/.editorconfig
+/.eslintrc
+/.gitignore
+/.istanbul.yml
+/.npmignore
+/.nvmrc
+/.travis.yml
+/.DS_Store
