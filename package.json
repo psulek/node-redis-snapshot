@@ -37,6 +37,7 @@
   "dependencies": {
     "buffer-builder": "^0.2.0",
     "buffer-crc32": "^0.2.5",
+    "chai": "^3.4.0",
     "util-is": "^0.1.0"
   },
   "devDependencies": {
