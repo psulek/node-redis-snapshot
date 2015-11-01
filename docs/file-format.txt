@@ -13,7 +13,6 @@ HEADER
 	version		UINT16
 	flags		UINT32
 	reserved1	UINT32
-	length		UINT64
 }
 
 SNAPSHOT

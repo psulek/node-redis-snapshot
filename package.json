@@ -34,7 +34,11 @@
   ],
   "author": "Peter Šulek <psulek@gmail.com>",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "buffer-builder": "^0.2.0",
+    "buffer-crc32": "^0.2.5",
+    "util-is": "^0.1.0"
+  },
   "devDependencies": {
     "eslint": "^1.x.x",
     "mocha": "2.x.x",
