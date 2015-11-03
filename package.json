@@ -4,10 +4,10 @@
   "description": "Creates snapshot of Redis database to custom binary file, to be able to restore Redis database from this file",
   "main": "index.js",
   "scripts": {
-    "spec": "mocha ./test/*.test.js",
+    "spec": "mocha ./test/tests.js",
     "it": "mocha ./test/*.it.js",
     "lint": "eslint .",
-    "test": "npm run lint && npm run spec",
+    "test": "npm run spec",
     "coverage": "istanbul cover _mocha -- ./test/*.test.js",
     "coveralls": "npm run coverage && cat ./coverage/lcov.info | coveralls"
   },
@@ -37,7 +37,6 @@
   "dependencies": {
     "buffer-builder": "^0.2.0",
     "buffer-crc32": "^0.2.5",
-    "chai": "^3.4.0",
     "util-is": "^0.1.0"
   },
   "devDependencies": {

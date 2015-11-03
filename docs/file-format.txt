@@ -17,7 +17,7 @@ HEADER
 
 SNAPSHOT
 {
-	date		INT32
+	date		UINT64
 	description	STRING
 	server		STRING
 }
