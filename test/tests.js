@@ -1,10 +1,14 @@
 /* global Buffer */
 /* global it */
 /* global describe */
-var assert = require('assert');
-var expect = require("chai").expect;
+//var assert = require('assert');
+var chai = require("chai");
+var expect = chai.expect;
+var assert = chai.assert;
+
 var snapshot = require('../lib/snapshot.js');
 var bufferXtra = require('../lib/buffer-xtra.js');
+var structure = require('../lib/structure.js');
 
 describe('buffer-extra', function() {
 	it('compare two buffers with zero bytes', function() {
@@ -69,28 +73,58 @@ describe('buffer', function() {
 	var HEADER_FLAGS = 0x00;
 	var HEADER_RESERVED1 = 0x00;
 
-	
+	function validateBasics(readBufferResult, date, desc, server) {
+		assert.equal(readBufferResult.success, true);
+		assert.equal(readBufferResult.errorCode, 0);
+		assert.isNotNull(readBufferResult.snapshot);
+		assert.isNotNull(readBufferResult.snapshot.header);
+		assert.isTrue(bufferXtra.equals(readBufferResult.snapshot.header.signature, HEADER_SIGNATURE));
+		assert.equal(readBufferResult.snapshot.header.version, HEADER_VERSION);
+		assert.equal(readBufferResult.snapshot.header.flags, HEADER_FLAGS);
+		assert.equal(readBufferResult.snapshot.header.reserved1, HEADER_RESERVED1);
+		assert.equal(readBufferResult.snapshot.date, date.getTime());
+		assert.equal(readBufferResult.snapshot.description, desc);
+		assert.equal(readBufferResult.snapshot.server, server);
+	}
+
 	it("creates snapshot buffer with header and basic snaphot info", function() {
 		var date = new Date();
-		var buffer = snapshot.createBuffer({description: 'This is description', server: '', date: date}, []);
+		var desc = 'This is description';
+		var server = 'localhost:6379';
+		var buffer = snapshot.createBuffer({description: desc, server: server, date: date}, []);
 		
-		var pos = 0;
-		assert.equal(bufferXtra.equals(buffer, HEADER_SIGNATURE, 0, 0, 4), true);
-		pos += 4;
+		var result = snapshot.readBuffer(buffer);
+		validateBasics(result, date, desc, server);
+	});
+
+	it("creates snapshot buffer with one redis item", function() {
+		var date = new Date();
+		var desc = 'This is description';
+		var server = 'localhost:6379';
 		
-		assert.equal(buffer.readUInt16LE(pos), HEADER_VERSION);
-		pos += 2;
-
-		assert.equal(buffer.readUInt32LE(pos), HEADER_FLAGS);
-		pos += 4;
-
-		assert.equal(buffer.readUInt32LE(pos), HEADER_RESERVED1);
-		pos += 4;
-
-		var bufferDate = new Date(buffer.readDoubleLE(pos)).getTime(); 
-		assert.equal(bufferDate, date.getTime());
-		pos += 8;
+		var keyBuffer = new Buffer([1, 2, 3]);
+		var keyType = structure.KeyTypes.String;
+		var ttl = 30;
+		var ttlInSeconds = true;
+		var dataBuffer = new Buffer('simple data');
+		var dataFormat = structure.DataFormats.Custom;
+		var computeCrc = true;
+		var redisItem = structure.createRedisItem(keyBuffer, keyType, ttl, ttlInSeconds, dataBuffer, dataFormat, computeCrc);
 		
-		var bufferDesc = buffer.readUInt32LE(pos);
+		var buffer = snapshot.createBuffer({description: desc, server: server, date: date}, [redisItem]);
+		
+		var result = snapshot.readBuffer(buffer);
+		validateBasics(result, date, desc, server);
+		
+		assert.isNotNull(result.snapshot.items);
+		assert.equal(result.snapshot.items.length, 1);
+		
+		var item = result.snapshot.items[0];
+		assert.isNotNull(item);
+		assert.equal(bufferXtra.equals(item.key, keyBuffer));
+		assert.equal(item.type, keyType);
+		assert.equal(item.ttl, ttl);
+		assert.equal(item.ttlFormat);
+		assert.equal();
 	});
 });
