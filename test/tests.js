@@ -16,7 +16,7 @@ describe('buffer-extra', function() {
 		var bufferB = new Buffer([]);
 		assert.equal(bufferXtra.equals(bufferA, bufferB), true);
 	});
-	
+
 	it('compare two buffers with different length', function() {
 		var bufferA = new Buffer([1]);
 		var bufferB = new Buffer([1,2]);
@@ -64,6 +64,12 @@ describe('buffer-extra', function() {
 		var bufferB = new Buffer([3]);
 		assert.equal(bufferXtra.equals(bufferA, bufferB, 2, 0, -1), true);
 	});
+
+	it('slice new buffer from other buffer', function() {
+		var bufferA = new Buffer([1,2,3,4]);
+		var bufferB = bufferXtra.sliceNew(bufferA, 1, 2);
+		assert.equal(bufferXtra.equals(bufferB, new Buffer([2,3])), true);
+	});
 });
 
 
@@ -92,7 +98,7 @@ describe('buffer', function() {
 		var desc = 'This is description';
 		var server = 'localhost:6379';
 		var buffer = snapshot.createBuffer({description: desc, server: server, date: date}, []);
-		
+
 		var result = snapshot.readBuffer(buffer);
 		validateBasics(result, date, desc, server);
 	});
@@ -101,30 +107,30 @@ describe('buffer', function() {
 		var date = new Date();
 		var desc = 'This is description';
 		var server = 'localhost:6379';
-		
+
 		var keyBuffer = new Buffer([1, 2, 3]);
 		var keyType = structure.KeyTypes.String;
 		var ttl = 30;
-		var ttlInSeconds = true;
+		var ttlFormat = structure.TTLFormats.Seconds;
 		var dataBuffer = new Buffer('simple data');
 		var dataFormat = structure.DataFormats.Custom;
 		var computeCrc = true;
-		var redisItem = structure.createRedisItem(keyBuffer, keyType, ttl, ttlInSeconds, dataBuffer, dataFormat, computeCrc);
-		
+		var redisItem = structure.createRedisItem(keyBuffer, keyType, ttl, ttlFormat, dataBuffer, dataFormat, computeCrc);
+
 		var buffer = snapshot.createBuffer({description: desc, server: server, date: date}, [redisItem]);
-		
+
 		var result = snapshot.readBuffer(buffer);
 		validateBasics(result, date, desc, server);
-		
+
 		assert.isNotNull(result.snapshot.items);
 		assert.equal(result.snapshot.items.length, 1);
-		
+
 		var item = result.snapshot.items[0];
 		assert.isNotNull(item);
-		assert.equal(bufferXtra.equals(item.key, keyBuffer));
+		assert.equal(bufferXtra.equals(item.key, keyBuffer), true);
 		assert.equal(item.type, keyType);
 		assert.equal(item.ttl, ttl);
-		assert.equal(item.ttlFormat);
-		assert.equal();
+		assert.equal(item.ttlFormat, ttlFormat);
+		//assert.equal();
 	});
 });
